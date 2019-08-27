@@ -73,6 +73,7 @@ namespace NI8473Test
         //一次可以接收多条数据
         public static void Receive()
         {
+            //读取多帧只是依次读取多帧，导致不能实时读到发送后的值，需在一段时间内读去查询值。
             var cancelTokenSource = new CancellationTokenSource(500);
             while (!cancelTokenSource.IsCancellationRequested)//设置读取超时
             {
