@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Threading;
+
 namespace NI8473Test
 {
 
@@ -52,7 +54,7 @@ namespace NI8473Test
         [DllImport("nican.dll")]
         static extern int ncWriteMult(ulong ObjHandle, ulong DataSize, NCTYPE_CAN_STRUCT* DataPtr);
         #endregion
-        static uint[] attrIdList = new uint[] 
+        static uint[] attrIdList = new uint[]
         {
             0x80000006, /* Start On Open, NCTYPE_BOOL, Set, CAN Interface */
             0x80000007, /* Baud Rate, Set, CAN Interface */
@@ -94,32 +96,36 @@ namespace NI8473Test
 
         public static void ReadMult()
         {
-            NCTYPE_CAN_STRUCT[] _STRUCT1 = new NCTYPE_CAN_STRUCT[150];
-            fixed (NCTYPE_CAN_STRUCT* p = _STRUCT1)
+            var cancelTokenSource = new CancellationTokenSource(500);
+            while (!cancelTokenSource.IsCancellationRequested)//设置读取超时
             {
-                NCTYPE_CAN_STRUCT* pp = p;
-                int szie=sizeof(NCTYPE_CAN_STRUCT)*_STRUCT1.Length;
-                ncReadMult(pObjHandlePtr, szie, pp, ref pActualDataSize);
-                pActualDataSize = pActualDataSize / (uint)sizeof(NCTYPE_CAN_STRUCT);
-                for (int i = 0; i < pActualDataSize; i++)
+                NCTYPE_CAN_STRUCT[] _STRUCT1 = new NCTYPE_CAN_STRUCT[150];
+                fixed (NCTYPE_CAN_STRUCT* p = _STRUCT1)
                 {
-                    DateTime date = DateTime.FromFileTime((long)pp->Timestamp);
-                    Console.Write("Timestamp:{0}\t", date);
-                    Console.Write("Id:{0:X2}\t", pp->ArbitrationId);
-                    Console.Write("FrameType:{0:X2}\t", pp->FrameType);
-                    Console.Write("Length:{0:X2}\t", pp->DataLength);
-                    byte* pdata = pp->Data;
-                    for (int t = 0; t < 8; t++)
+                    NCTYPE_CAN_STRUCT* pp = p;
+                    int szie = sizeof(NCTYPE_CAN_STRUCT) * _STRUCT1.Length;
+                    ncReadMult(pObjHandlePtr, szie, pp, ref pActualDataSize);
+                    pActualDataSize = pActualDataSize / (uint)sizeof(NCTYPE_CAN_STRUCT);
+                    for (int i = 0; i < pActualDataSize; i++)
                     {
-                        Console.Write("{0:X2}" + " ", *pdata);
-                        pdata++;
+                        DateTime date = DateTime.FromFileTime((long)pp->Timestamp);
+                        Console.Write("Timestamp:{0}\t", date);
+                        Console.Write("Id:{0:X2}\t", pp->ArbitrationId);
+                        Console.Write("FrameType:{0:X2}\t", pp->FrameType);
+                        Console.Write("Length:{0:X2}\t", pp->DataLength);
+                        byte* pdata = pp->Data;
+                        for (int t = 0; t < 8; t++)
+                        {
+                            Console.Write("{0:X2}" + " ", *pdata);
+                            pdata++;
+                        }
+                        pp++;
+                        Console.WriteLine();
                     }
-                    pp++;
-                    Console.WriteLine();
                 }
-            }
-            Console.WriteLine();
+                Console.WriteLine();
 
+            }
         }
         public static void Write(string Data)
         {

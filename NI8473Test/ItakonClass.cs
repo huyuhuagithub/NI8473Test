@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 namespace NI8473Test
 {
-    public unsafe class ZLGCANClass
+    public unsafe class ItakonClass
     {
         internal struct _VCI_INIT_CONFIG
         {
@@ -55,6 +55,7 @@ namespace NI8473Test
 
         public static uint Init()
         {
+
             uint o = VCI_OpenDevice(DeviceType, DeviceInd, 0);
             _VCI_INIT_CONFIG InitConfig = new _VCI_INIT_CONFIG();
             _VCI_INIT_CONFIG* pInitConfig = &InitConfig;
@@ -81,7 +82,7 @@ namespace NI8473Test
                 fixed (_VCI_CAN_OBJ* pcanObj = canObj)
                 {
                     _VCI_CAN_OBJ* pNewcanObj = pcanObj;
-                    //int szie = sizeof(_VCI_CAN_OBJ) * canObj.Length;
+                    int szie = sizeof(_VCI_CAN_OBJ) * canObj.Length;
                     uint FrameNumber = VCI_Receive(DeviceType, DeviceInd, CANInd, pcanObj, 100, 400);
                     for (int i = 0; i < FrameNumber; i++)
                     {
@@ -101,8 +102,11 @@ namespace NI8473Test
                             pNewcanObj++;
                             Console.WriteLine();
                         }
+                      
                     }
+                    
                 }
+              
             }
         }
 
@@ -114,25 +118,39 @@ namespace NI8473Test
         //一次可以发送多条数据
         public static void Transmit()
         {
-            //byte[] dataValue1 = new byte[8] { 0x00, 0x74, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00 };
-            //byte[] dataValue2 = new byte[8] { 0x00, 0x74, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00 };
-            //byte[] dataValue3 = new byte[8] { 0x00, 0x74, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
+            //EC A0 45 2D 43 61 72 78
             byte[] dataValue1 = new byte[8] { 0xEC, 0xA0, 0x45, 0x2D, 0x43, 0x61, 0x72, 0x78 };
-            byte[] dataValue2 = new byte[8] { 0x11, 0x62, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-            List<byte[]> MultFrameValue = new List<byte[]>();
+            //byte[] dataValue1 = new byte[8] { 0x11, 0x62, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            //byte[] dataValue3 = new byte[8] { 0x00, 0x74, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            //List<byte[]> MultFrameValue = new List<byte[]>();
+            //MultFrameValue.Add(dataValue1);
+            ////MultFrameValue.Add(dataValue2);
+            ////MultFrameValue.Add(dataValue3);
+            //List<_VCI_CAN_OBJ> nCTYPE_CAN_FRAMEs = NewMethod(MultFrameValue);
+            //_VCI_CAN_OBJ[] canObj = new _VCI_CAN_OBJ[1];
+            //fixed (_VCI_CAN_OBJ* pcanObj = nCTYPE_CAN_FRAMEs.ToArray())
+            //{
+            //    _VCI_CAN_OBJ* pNewcanObj = pcanObj;
+            //    int szie = sizeof(_VCI_CAN_OBJ) * canObj.Length;
+            //    uint FrameNumber = VCI_Transmit(DeviceType, DeviceInd, CANInd, pNewcanObj, 1);
+            //}
 
-            MultFrameValue.Add(dataValue1);
-            //MultFrameValue.Add(dataValue2);
-            //MultFrameValue.Add(dataValue3);
-            List<_VCI_CAN_OBJ> nCTYPE_CAN_FRAMEs = NewMethod(MultFrameValue);
-            _VCI_CAN_OBJ[] canObj = new _VCI_CAN_OBJ[2];
-            fixed (_VCI_CAN_OBJ* pcanObj = nCTYPE_CAN_FRAMEs.ToArray())
+
+            _VCI_CAN_OBJ nCTYPE_CAN_FRAME1 = new _VCI_CAN_OBJ();
+            nCTYPE_CAN_FRAME1.ID = 0x77A;//帧ID
+            nCTYPE_CAN_FRAME1.SendType = 0;
+            nCTYPE_CAN_FRAME1.RemoteFlag = 0;
+            nCTYPE_CAN_FRAME1.ExternFlag = 0;
+            nCTYPE_CAN_FRAME1.DataLen = 8;
+            for (int d = 0; d < 8; d++)
             {
-                _VCI_CAN_OBJ* pNewcanObj = pcanObj;
-                int szie = sizeof(_VCI_CAN_OBJ) * canObj.Length;
-                uint FrameNumber = VCI_Transmit(DeviceType, DeviceInd, CANInd, pNewcanObj, 2);
+                nCTYPE_CAN_FRAME1.Data[d] = dataValue1[d];
             }
+
+            _VCI_CAN_OBJ* pcanObj = &nCTYPE_CAN_FRAME1;
+            int szie = sizeof(_VCI_CAN_OBJ);
+            uint FrameNumber = VCI_Transmit(DeviceType, DeviceInd, CANInd, pcanObj, 1);
+
         }
 
         //拼装多条数据
@@ -142,7 +160,7 @@ namespace NI8473Test
             _VCI_CAN_OBJ nCTYPE_CAN_FRAME1 = new _VCI_CAN_OBJ();
             for (int i = 0; i < data.Count; i++)
             {
-                nCTYPE_CAN_FRAME1.ID = 0x77a;//帧ID
+                nCTYPE_CAN_FRAME1.ID = 0x77A;//帧ID
                 nCTYPE_CAN_FRAME1.SendType = 0;
                 nCTYPE_CAN_FRAME1.RemoteFlag = 0;
                 nCTYPE_CAN_FRAME1.ExternFlag = 0;

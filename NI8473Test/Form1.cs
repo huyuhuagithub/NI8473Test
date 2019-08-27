@@ -87,6 +87,29 @@ namespace NI8473Test
         private void button8_Click(object sender, EventArgs e)
         {
             ZLGCANClass.Transmit();
+            //Thread.Sleep(50);
+            ZLGCANClass.Receive();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            ItakonClass.Init();
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            ItakonClass.Close();
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            ItakonClass.Transmit();
+            ItakonClass.Receive();
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            ItakonClass.Receive();
         }
     }
 }
