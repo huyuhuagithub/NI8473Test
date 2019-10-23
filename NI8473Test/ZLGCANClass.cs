@@ -141,14 +141,14 @@ namespace NI8473Test
         {
             List<_VCI_CAN_OBJ> nCTYPE_CAN_FRAMEs = new List<_VCI_CAN_OBJ>();
             _VCI_CAN_OBJ nCTYPE_CAN_FRAME1 = new _VCI_CAN_OBJ();
-            for (int i = 0; i < data.Count; i++)
+            for (int t = 0; t < data.Count; t++)
             {
                 nCTYPE_CAN_FRAME1.ID = 0x77a;//帧ID
                 nCTYPE_CAN_FRAME1.SendType = 0;
                 nCTYPE_CAN_FRAME1.RemoteFlag = 0;
                 nCTYPE_CAN_FRAME1.ExternFlag = 0;
                 nCTYPE_CAN_FRAME1.DataLen = 8;
-                fixed (byte* pdata = data[i])
+                fixed (byte* pdata = data[t])
                 {
                     byte* pnewdata = pdata;
                     for (int d = 0; d < 8; d++)
