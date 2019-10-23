@@ -162,5 +162,32 @@ namespace NI8473Test
             return nCTYPE_CAN_FRAMEs;
         }
 
+        //一次可以发送一条数据
+        public static void Transmit1()
+        {
+            byte[] dataValue1 = new byte[8] { 0xEC, 0xA0, 0x45, 0x2D, 0x43, 0x61, 0x72, 0x78 };
+            _VCI_CAN_OBJ nCTYPE_CAN_FRAME1 = new _VCI_CAN_OBJ();
+            nCTYPE_CAN_FRAME1.ID = 0x77a;//帧ID
+            nCTYPE_CAN_FRAME1.SendType = 0;
+            nCTYPE_CAN_FRAME1.RemoteFlag = 0;
+            nCTYPE_CAN_FRAME1.ExternFlag = 0;
+            nCTYPE_CAN_FRAME1.DataLen = 8;
+            fixed (byte* pdata = dataValue1)
+            {
+                byte* pnewdata = pdata;
+                for (int d = 0; d < 8; d++)
+                {
+                    nCTYPE_CAN_FRAME1.Data[d] = *pnewdata;
+                    pnewdata++;
+                }
+            }
+
+            {
+                _VCI_CAN_OBJ* pcanObj = &nCTYPE_CAN_FRAME1;
+                _VCI_CAN_OBJ* pNewcanObj = pcanObj;
+                int szie = sizeof(_VCI_CAN_OBJ);
+                uint FrameNumber = VCI_Transmit(DeviceType, DeviceInd, CANInd, pNewcanObj, 2);
+            }
+        }
     }
 }
