@@ -39,29 +39,30 @@ namespace NI8473Test
 
         private void button3_Click(object sender, EventArgs e)
         {
-            NI8473Class.Write("00 74 12 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 13 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 14 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 15 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 16 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 17 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 18 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 19 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 1a 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 1b 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 1c 00 00 00 00 00");
-            Thread.Sleep(150);
-            NI8473Class.Write("00 74 1d 00 00 00 00 00");
+            //NI8473Class.Write("00 74 12 00 00 00 00 00");
+            //Thread.Sleep(150);
+            //NI8473Class.Write("00 74 13 00 00 00 00 00");
+            //Thread.Sleep(150);
+            //NI8473Class.Write("00 74 14 00 00 00 00 00");
+            //Thread.Sleep(150);
+            //NI8473Class.Write("00 74 15 00 00 00 00 00");
+            //Thread.Sleep(150);
+            //NI8473Class.Write("00 74 16 00 00 00 00 00");
+            //Thread.Sleep(150);
+            //NI8473Class.Write("00 74 17 00 00 00 00 00");
+            //Thread.Sleep(150);
+            //NI8473Class.Write("00 74 18 00 00 00 00 00");
+            //Thread.Sleep(150);
+            //NI8473Class.Write("00 74 19 00 00 00 00 00");
+            //Thread.Sleep(150);
+            //NI8473Class.Write("00 74 1a 00 00 00 00 00");
+            //Thread.Sleep(150);
+            //NI8473Class.Write("00 74 1b 00 00 00 00 00");
+            //Thread.Sleep(150);
+            //NI8473Class.Write("00 74 1c 00 00 00 00 00");
+            //Thread.Sleep(150);
+            NI8473Class.Write(textBox1.Text);
+            NI8473Class.ReadMult();
         }
 
         private void button4_Click(object sender, EventArgs e)

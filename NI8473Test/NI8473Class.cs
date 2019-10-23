@@ -97,7 +97,7 @@ namespace NI8473Test
         public static void ReadMult()
         {
             //读取多帧只是依次读取多帧，导致不能实时读到发送后的值，需在一段时间内读去查询值。
-            var cancelTokenSource = new CancellationTokenSource(500);
+            var cancelTokenSource = new CancellationTokenSource(1000);
             while (!cancelTokenSource.IsCancellationRequested)//设置读取超时
             {
                 NCTYPE_CAN_STRUCT[] _STRUCT1 = new NCTYPE_CAN_STRUCT[150];
@@ -109,23 +109,24 @@ namespace NI8473Test
                     pActualDataSize = pActualDataSize / (uint)sizeof(NCTYPE_CAN_STRUCT);
                     for (int i = 0; i < pActualDataSize; i++)
                     {
-                        DateTime date = DateTime.FromFileTime((long)pp->Timestamp);
-                        Console.Write("Timestamp:{0}\t", date);
-                        Console.Write("Id:{0:X2}\t", pp->ArbitrationId);
-                        Console.Write("FrameType:{0:X2}\t", pp->FrameType);
-                        Console.Write("Length:{0:X2}\t", pp->DataLength);
-                        byte* pdata = pp->Data;
-                        for (int t = 0; t < 8; t++)
+                        if (pp->ArbitrationId == 0x7ab)
                         {
-                            Console.Write("{0:X2}" + " ", *pdata);
-                            pdata++;
+                            DateTime date = DateTime.FromFileTime((long)pp->Timestamp);
+                            Console.Write("Timestamp:{0}\t", date);
+                            Console.Write("Id:{0:X2}\t", pp->ArbitrationId);
+                            Console.Write("FrameType:{0:X2}\t", pp->FrameType);
+                            Console.Write("Length:{0:X2}\t", pp->DataLength);
+                            byte* pdata = pp->Data;
+                            for (int t = 0; t < 8; t++)
+                            {
+                                Console.Write("{0:X2}" + " ", *pdata);
+                                pdata++;
+                            }
+                            Console.WriteLine();
                         }
                         pp++;
-                        Console.WriteLine();
                     }
                 }
-                Console.WriteLine();
-
             }
         }
         public static void Write(string Data)
@@ -155,7 +156,7 @@ namespace NI8473Test
             //指针的方式发送数据++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             NCTYPE_CAN_FRAME _STRUCT = new NCTYPE_CAN_FRAME();
             NCTYPE_CAN_FRAME* p = &_STRUCT;
-            p->ArbitrationId = 0x512;
+            p->ArbitrationId = 0x72b;
             p->IsRemote = 0;
             p->DataLength = 8;
             string strdata = Data;
@@ -163,7 +164,7 @@ namespace NI8473Test
             List<byte> bytelist = new List<byte>();
             for (int t = 0; t < len; t++)
             {
-                bytelist.Add(System.Convert.ToByte("0x" + strdata.Substring(t * 3, 2), 16));
+                bytelist.Add(Convert.ToByte("0x" + strdata.Substring(t * 3, 2), 16));
                 p->Data[t] = bytelist[t];
 
             }
