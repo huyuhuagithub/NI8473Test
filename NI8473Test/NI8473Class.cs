@@ -98,13 +98,14 @@ namespace NI8473Test
         {
             //读取多帧只是依次读取多帧，导致不能实时读到发送后的值，需在一段时间内读去查询值。
             var cancelTokenSource = new CancellationTokenSource(1000);
+            
             while (!cancelTokenSource.IsCancellationRequested)//设置读取超时
             {
                 NCTYPE_CAN_STRUCT[] _STRUCT1 = new NCTYPE_CAN_STRUCT[150];
-                fixed (NCTYPE_CAN_STRUCT* p = _STRUCT1)
+                fixed (NCTYPE_CAN_STRUCT* p = _STRUCT1)//指针指向数组的首指针
                 {
-                    NCTYPE_CAN_STRUCT* pp = p;
-                    int szie = sizeof(NCTYPE_CAN_STRUCT) * _STRUCT1.Length;
+                    NCTYPE_CAN_STRUCT* pp = p;//fixed语句的指针不能移动需赋值给新指针才可操作。
+                    int szie = sizeof(NCTYPE_CAN_STRUCT) * _STRUCT1.Length;//结构体数组的总元素个数。
                     ncReadMult(pObjHandlePtr, szie, pp, ref pActualDataSize);
                     pActualDataSize = pActualDataSize / (uint)sizeof(NCTYPE_CAN_STRUCT);
                     for (int i = 0; i < pActualDataSize; i++)
@@ -124,7 +125,7 @@ namespace NI8473Test
                             }
                             Console.WriteLine();
                         }
-                        pp++;
+                        pp++;//指针操作地址加一（数组的下一个元素）
                     }
                 }
             }
